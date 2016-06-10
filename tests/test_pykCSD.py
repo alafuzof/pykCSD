@@ -373,8 +373,6 @@ class TestKCSD_all_utils(unittest.TestCase):
         lin_x = np.linspace(xmin - ext_x, xmax + ext_x, nx)
         lin_y = np.linspace(ymin - ext_y, ymax + ext_y, ny)
         X, Y = np.meshgrid(lin_x, lin_y)
-        print(X)
-        print(Y)
         X_src, Y_src, R = sd.make_src_2D(X=X, Y=Y, n_src=nx*ny,
                                          ext_x=ext_x, ext_y=ext_y,
                                          R_init=0.5)

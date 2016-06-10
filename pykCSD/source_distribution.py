@@ -75,16 +75,19 @@ def get_src_params_1D(Lx, n_src):
     ds : float
         spacing between the sources
     """
-    V = Lx
-    V_unit = V/n_src
-    L_unit = V_unit
+    #V = Lx
+    #V_unit = V/n_src
+    #L_unit = V_unit
 
-    nx = round(Lx/L_unit)
-    ds = Lx/(nx-1)
+    #nx = round(Lx/L_unit)
+    #ds = Lx/(nx-1)
 
-    Lx_n = (nx-1)*ds
+    #Lx_n = (nx-1)*ds
+    #nx = n_src
+    #Lx_n = Lx
+    ds = Lx/(n_src-1)
 
-    return (nx, Lx_n, ds)
+    return (n_src, Lx, ds)
 
 
 # TODO: replace with the hypervolume approach?
@@ -180,14 +183,21 @@ def get_src_params_2D(Lx, Ly, n_src):
     ds : float
         spacing between the sources
     """
-    coeff = [Ly, Lx - Ly, -Lx * n_src]
+    #coeff = [Ly, Lx - Ly, -Lx * n_src]
 
-    rts = np.roots(coeff)
-    r = [r for r in rts if type(r) is not complex and r > 0]
-    nx = r[0]
-    ny = n_src/nx
+    #rts = np.roots(coeff)
+    #r = [r for r in rts if type(r) is not complex and r > 0]
+    #nx = r[0]
+    #ny = n_src/nx
 
-    ds = Lx/(nx-1)
+    #ds = Lx/(nx-1)
+
+    z = (Lx - Ly)/(2*Ly)
+    w = Ly / Lx
+
+    nx = np.sqrt(n_src/w + z**2) - z
+    ny = w*nx + 1 - w
+    ds = Lx / (nx - 1)
 
     nx = np.floor(nx) + 1
     ny = np.floor(ny) + 1
