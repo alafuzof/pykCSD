@@ -65,11 +65,11 @@ class TestKCSD1D(unittest.TestCase):
         k.estimate_pots()
         lambdas = np.array([0.1, 0.5, 1.0])
         n_elec = k.solver.elec_pos.shape[0]
-        index_generator = LeaveOneOut(n_elec, indices=True)
+        index_generator = LeaveOneOut(n_elec)#, indices=True)
         k.solver.lambd = cv.choose_lambda(lambdas, k.solver.sampled_pots,
                                           k.solver.k_pot, k.solver.elec_pos,
                                           index_generator)
-        self.assertEquals(k.solver.lambd, 1.0)
+        self.assertEqual(k.solver.lambd, 1.0)
 
     def test_KCSD_1D_zero_pot(self):
         """if measured potential is 0, the calculated potential should be 0"""
@@ -126,8 +126,8 @@ class TestKCSD1D_full_reconstruction(unittest.TestCase):
         self.elec_pos = np.array([[x] for x in np.linspace(self.xmin, self.xmax, 20)])
         self.true_pots = [calculate_pot(self.true_csd, self.x, x0) for x0 in self.x]
         self.meas_pot = np.array([[calculate_pot(self.true_csd, self.x, x0)] for x0 in self.elec_pos])
-        print self.meas_pot.shape
-        print self.elec_pos.shape
+        print(self.meas_pot.shape)
+        print(self.elec_pos.shape)
 
     def test_KCSD_1D_pot_reconstruction(self):
         """reconstructed pots should be similar to model pots"""
@@ -143,7 +143,10 @@ class TestKCSD1D_full_reconstruction(unittest.TestCase):
         scatter(k.elec_pos, k.sampled_pots)
         show()"""
         for estimated_pot, true_pot in zip(k.solver.estimated_pots, self.true_pots):
-            self.assertAlmostEqual(estimated_pot, true_pot, places=1)
+            # self.assertAlmostEqual(estimated_pot, true_pot, places=1)
+            np.testing.assert_almost_equal(estimated_pot, true_pot, decimal=1)
+
+
 
     def test_KCSD_1D_csd_reconstruction(self):
         """reconstructed csd should be similar to model csd"""
@@ -158,7 +161,8 @@ class TestKCSD1D_full_reconstruction(unittest.TestCase):
         show()
         print k.X_src"""
         for estimated_csd, true_csd in zip(k.solver.estimated_csd, self.true_csd):
-            self.assertAlmostEqual(estimated_csd, true_csd, places=1)
+            #self.assertAlmostEqual(estimated_csd, true_csd, places=1)
+            np.testing.assert_almost_equal(estimated_csd, true_csd, decimal=1)
 
     def test_KCSD_1D_lambda_choice(self):
         """for potentials calculated from model, lambda < 1.0"""
@@ -166,9 +170,9 @@ class TestKCSD1D_full_reconstruction(unittest.TestCase):
         params = {'sigma': self.sigma, 'source_type': 'gauss_lim',
                   'x_min': -5.0, 'x_max': 10.0, 'h': self.h}
         k = KCSD(self.elec_pos, self.meas_pot, params)
-        lambdas = np.array([100.0/2**n for n in xrange(1, 20)])
+        lambdas = np.array([100.0/2**n for n in range(1, 20)])
         n_elec = k.solver.elec_pos.shape[0]
-        index_generator = LeaveOneOut(n_elec, indices=True)
+        index_generator = LeaveOneOut(n_elec)#, indices=True)
         k.solver.lambd = cv.choose_lambda(lambdas, k.solver.sampled_pots,
                                           k.solver.k_pot, k.solver.elec_pos,
                                           index_generator)
@@ -281,13 +285,13 @@ class TestKCSD2D_full_recostruction(unittest.TestCase):
         err = norm(expected_csd - self.k.estimated_csd[:,:,0], ord=2)
         #comparison_plot_2D(expected_csd, self.k.estimated_csd[:,:,0],
         #                   'matlab', 'python')
-        print np.max(expected_csd - self.k.estimated_csd)
+        print(np.max(expected_csd - self.k.estimated_csd))
         self.assertAlmostEqual(err, 0.0, places=0)
 
     def test_KCSD2D_cross_validation_five_electrodes(self):
-        lambdas = np.array([100.0/2**n for n in xrange(1, 20)])
+        lambdas = np.array([100.0/2**n for n in range(1, 20)])
         n_elec = self.k.elec_pos.shape[0]
-        index_generator = LeaveOneOut(n_elec, indices=True)
+        index_generator = LeaveOneOut(n_elec)#, indices=True)
         self.k.lambd = cv.choose_lambda(lambdas,
             self.k.sampled_pots,
             self.k.k_pot, self.k.elec_pos,
@@ -338,20 +342,20 @@ class TestKCSD_all_utils(unittest.TestCase):
     def test_make_src1D_no_ext_4_src(self):
         X = np.array([0.0, 0.1, 0.2, 0.3])
         (X_src, R) = sd.make_src_1D(X=X, ext_x=0.0, n_src=4, R_init=0.2)
-        for i in xrange(len(X_src)):
+        for i in range(len(X_src)):
             self.assertAlmostEqual(X_src[i], X[i], places=6)
 
     def test_make_src1D_negative_coords_4_src(self):
         X = np.array([-0.5, -0.3, -0.1, 0.1])
         (X_src, R) = sd.make_src_1D(X=X, ext_x=0.0, n_src=4, R_init=0.2)
-        for i in xrange(len(X_src)):
+        for i in range(len(X_src)):
             self.assertAlmostEqual(X_src[i], X[i], places=6)
 
     def test_make_src1D_with_ext_6_src(self):
         X = np.array([0.0, 0.1, 0.2, 0.3])
         (X_src, R) = sd.make_src_1D(X=X, ext_x=0.1, n_src=6, R_init=0.2)
         expected_X_src = [-0.1, 0.0, 0.1, 0.2, 0.3, 0.4, 0.5]
-        for i in xrange(len(X_src)):
+        for i in range(len(X_src)):
             self.assertAlmostEqual(X_src[i], expected_X_src[i], places=6)
 
     def test_make_src1D_with_ext_6_src_translated(self):
@@ -369,6 +373,8 @@ class TestKCSD_all_utils(unittest.TestCase):
         lin_x = np.linspace(xmin - ext_x, xmax + ext_x, nx)
         lin_y = np.linspace(ymin - ext_y, ymax + ext_y, ny)
         X, Y = np.meshgrid(lin_x, lin_y)
+        print(X)
+        print(Y)
         X_src, Y_src, R = sd.make_src_2D(X=X, Y=Y, n_src=nx*ny,
                                          ext_x=ext_x, ext_y=ext_y,
                                          R_init=0.5)
@@ -378,12 +384,14 @@ class TestKCSD_all_utils(unittest.TestCase):
         expected_Y_src = [[-0.5, -0.5, -0.5],
                           [0.5, 0.5, 0.5],
                           [1.5, 1.5, 1.5]]
-        for x_row, xe_row in zip(X_src, expected_X_src):
-            for x, xe in zip(x_row, xe_row):
-                self.assertEquals(x, xe)
-        for y_row, ye_row in zip(Y_src, expected_Y_src):
-            for y, ye in zip(y_row, ye_row):
-                self.assertEquals(y, ye)
+        #for x_row, xe_row in zip(X_src, expected_X_src):
+        #    for x, xe in zip(x_row, xe_row):
+        #        self.assertEqual(x, xe)
+        np.testing.assert_almost_equal(X_src, expected_X_src, decimal=6)
+        #for y_row, ye_row in zip(Y_src, expected_Y_src):
+        #    for y, ye in zip(y_row, ye_row):
+        #        self.assertEqual(y, ye)
+        np.testing.assert_almost_equal(Y_src, expected_Y_src, decimal=6)
 
     def test_make_src2D_translated_grid(self):
         xmin, xmax = -1.5, -0.5
@@ -404,10 +412,10 @@ class TestKCSD_all_utils(unittest.TestCase):
                           [0.5, 0.5, 0.5]]
         for x_row, xe_row in zip(X_src, expected_X_src):
             for x, xe in zip(x_row, xe_row):
-                self.assertEquals(x, xe)
+                self.assertAlmostEqual(x, xe, places=6)
         for y_row, ye_row in zip(Y_src, expected_Y_src):
             for y, ye in zip(y_row, ye_row):
-                self.assertEquals(y, ye)
+                self.assertAlmostEqual(y, ye, places=6)
 
     def test_make_src3D_regular_grid(self):
         """ """
@@ -435,7 +443,7 @@ class TestKCSD_all_utils(unittest.TestCase):
         for x_slice, xe_slice in zip(X_src, expected_X_src):
             for x_row, xe_row in zip(x_slice, xe_slice):
                 for x, xe in zip(x_row, xe_row):
-                    self.assertEquals(x, xe)
+                    self.assertEqual(x, xe)
 
     def test_make_src3D_translated_grid(self):
         xmin, xmax = -1.0, 0.0
@@ -463,7 +471,7 @@ class TestKCSD_all_utils(unittest.TestCase):
         for x_slice, xe_slice in zip(X_src, expected_X_src):
             for x_row, xe_row in zip(x_slice, xe_slice):
                 for x, xe in zip(x_row, xe_row):
-                    self.assertEquals(x, xe)
+                    self.assertEqual(x, xe)
 
     def test_gauss1Dlim_basis_normalized(self):
         mu = 0
@@ -549,7 +557,7 @@ def integrate_2D(y, xlin, ylin):
     Ny = ylin.shape[0]
     I = np.zeros(Ny)
     # do a 1-D integral over every row
-    for i in xrange(Ny):
+    for i in range(Ny):
         I[i] = np.trapz(y[i, :], ylin)
 
     # then an integral over the result
@@ -560,12 +568,12 @@ def integrate_2D(y, xlin, ylin):
 def integrate_3D(y, xlin, ylin, zlin):
     Nz = zlin.shape[0]
     J = np.zeros((Nz,Nz))
-    for i in xrange(Nz):
+    for i in range(Nz):
         J[i,:] = np.trapz(y[i, :, :], zlin)
 
     Ny = ylin.shape[0]
     I = np.zeros(Ny)
-    for i in xrange(Ny):
+    for i in range(Ny):
         I[i] = np.trapz(J[i, :], ylin)
 
     norm = np.trapz(I, xlin)

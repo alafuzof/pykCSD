@@ -1,8 +1,8 @@
 import numpy as np
 
-from pykCSD import KCSD
-import plotting_utils as plut
-import potentials as pt
+from .pykCSD import KCSD
+from . import plotting_utils as plut
+from . import potentials as pt
 
 """
 This module contains routines to perform a visual check of pots and CSD
@@ -58,7 +58,7 @@ def integrate_2D(x, y, xlin, ylin, csd, h):
 
     # do a 1-D integral over every row
     I = np.zeros(Ny)
-    for i in xrange(Ny):
+    for i in range(Ny):
         I[i] = np.trapz(y[:, i], ylin)
 
     # then an integral over the result
@@ -93,7 +93,7 @@ def integrate_3D(x, y, z, xlin, ylin, zlin, csd):
     #print csd
 
     J = np.zeros((Ny, Nz))
-    for i in xrange(Nz):
+    for i in range(Nz):
         J[:, i] = np.trapz(csd[:, :, i], zlin)
 
     #print '1st integration'
@@ -101,7 +101,7 @@ def integrate_3D(x, y, z, xlin, ylin, zlin, csd):
 
     Ny = ylin.shape[0]
     I = np.zeros(Ny)
-    for i in xrange(Ny):
+    for i in range(Ny):
         I[i] = np.trapz(J[:, i], ylin)
 
     #print '2nd integration'
@@ -147,9 +147,9 @@ def compare_with_model_1D(X, true_csd, indx, params):
     csd_err = get_relative_error(rec_csd[:,0], true_csd[0,:])
     pot_err = true_pot - rec_pot
     pot_err = get_relative_error(rec_pot[:,0], true_pot[0,:])
-    print 'true_csd.shape: ', true_csd.shape
-    print 'recstr_csd.shape: ', rec_csd.shape
-    print 'csd_err.shape: ', csd_err.shape
+    print('true_csd.shape: ', true_csd.shape)
+    print('recstr_csd.shape: ', rec_csd.shape)
+    print('csd_err.shape: ', csd_err.shape)
 
     plut.plot_comparison_1D(X, elec_pos, true_csd[0, :], true_pot[0, :],
                             rec_csd, rec_pot, csd_err, pot_err)
@@ -184,7 +184,7 @@ def compare_with_model_2D(X, Y, true_csd, indx, params):
     elec_pos = np.array([[X[i, j], Y[i, j]] for i, j in indx])
     pots = np.array([[true_pots[i, j]] for i, j in indx])
 
-    print elec_pos
+    print(elec_pos)
     true_pots = np.atleast_2d(true_pots)
     k = KCSD(elec_pos, pots, params)
     k.estimate_pots()
@@ -193,9 +193,9 @@ def compare_with_model_2D(X, Y, true_csd, indx, params):
     rec_pot = k.solver.estimated_pots
     csd_err = get_relative_error(true_csd[:100, :100], rec_csd[:100, :100, 0].T)
     pot_err = get_relative_error(true_pots[:100, :100], rec_pot[:100, :100, 0].T)
-    print 'true_csd.shape: ', true_csd.shape
-    print 'recstr_csd.shape: ', rec_csd.shape
-    print 'csd_err.shape: ', csd_err.shape
+    print('true_csd.shape: ', true_csd.shape)
+    print('recstr_csd.shape: ', rec_csd.shape)
+    print('csd_err.shape: ', csd_err.shape)
 
     plut.plot_comparison_2D(X[1:-1, 1:-1], Y[1:-1, 1:-1], elec_pos,
                             true_csd[1:-1, 1:-1], true_pots[1:-1, 1:-1],

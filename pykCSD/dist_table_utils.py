@@ -99,7 +99,7 @@ def interpolate_dist_table(xs, probed_dist_table, dt_len):
         kind='cubic',
         fill_value=0.0
     )
-    dt_int = np.array([inter(i) for i in xrange(dt_len)])
+    dt_int = np.array([inter(i) for i in range(dt_len)])
     dt_int.flatten()
     return dt_int
 

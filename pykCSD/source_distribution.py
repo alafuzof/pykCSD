@@ -129,6 +129,7 @@ def make_src_2D(X, Y, n_src, ext_x, ext_y, R_init):
 
     lin_x = np.linspace(np.min(X) - ext_x_n, np.max(X) + ext_x_n, nx)
     lin_y = np.linspace(np.min(Y) - ext_y_n, np.max(Y) + ext_y_n, ny)
+    #print(nx,ny)
 
     X_src, Y_src = np.meshgrid(lin_x, lin_y)
 

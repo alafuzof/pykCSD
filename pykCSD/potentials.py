@@ -7,7 +7,7 @@ from scipy import integrate
 from numpy import pi
 from skmonaco import mcmiser
 
-import basis_functions as bf
+from . import basis_functions as bf
 
 """
 This module contains routines for calculating potentials in 1D, 2D, 3D case.

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
-from KCSD1D import KCSD1D
-from KCSD2D import KCSD2D
-from KCSD3D import KCSD3D
+from .KCSD1D import KCSD1D
+from .KCSD2D import KCSD2D
+from .KCSD3D import KCSD3D
 
 
 class KCSD(object):

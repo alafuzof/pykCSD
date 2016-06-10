@@ -5,12 +5,12 @@ import numpy as np
 from numpy import dot, identity
 from numpy.linalg import norm, inv
 
-import basis_functions as bf
-import source_distribution as sd
-import potentials as pt
-import dist_table_utils as dt
-import plotting_utils as plut
-import parameters_utils as parut
+from . import basis_functions as bf
+from . import source_distribution as sd
+from . import potentials as pt
+from . import dist_table_utils as dt
+from . import plotting_utils as plut
+from . import parameters_utils as parut
 
 
 class KCSD2D(object):
@@ -92,7 +92,7 @@ class KCSD2D(object):
             'h': 1.0,
             'source_type': 'gauss'
         }
-        for (prop, default) in default_params.iteritems():
+        for (prop, default) in default_params.items():
             setattr(self, prop, params.get(prop, default))
 
         self.gdX = params.get('gdX', 0.01 * (self.xmax - self.xmin))
@@ -149,9 +149,9 @@ class KCSD2D(object):
         (nx, ny) = self.space_X.shape
         estimation = np.zeros((nx * ny, nt))
 
-        for t in xrange(nt):
+        for t in range(nt):
             beta = dot(k_inv, self.sampled_pots[:, t])
-            for i in xrange(self.elec_pos.shape[0]):
+            for i in range(self.elec_pos.shape[0]):
                 estimation[:, t] += beta[i] * estimation_table[:, i]
 
         estimation = estimation.reshape(nx, ny, nt)
@@ -228,12 +228,12 @@ class KCSD2D(object):
 
         self.b_pot_matrix = np.zeros((n, n_obs))
 
-        for i in xrange(0, n):
+        for i in range(0, n):
             # finding the coordinates of the i-th source
             i_x, i_y = np.unravel_index(i, (nx, ny))
             src = [self.X_src[i_x, i_y], self.Y_src[i_x, i_y]]
 
-            for j in xrange(0, n_obs):
+            for j in range(0, n_obs):
                 # for all the observation points
                 # checking the distance between the observation point and
                 # the source,
@@ -265,7 +265,7 @@ class KCSD2D(object):
 
         self.b_src_matrix = np.zeros((ngx, ngy, n))
 
-        for i in xrange(n):
+        for i in range(n):
             # getting the coordinates of the i-th source
             (i_x, i_y) = np.unravel_index(i, (nsx, nsy), order='F')
             y_src = self.Y_src[i_x, i_y]
@@ -296,7 +296,7 @@ class KCSD2D(object):
 
         self.b_interp_pot_matrix = np.zeros((ngx, ngy, n_src))
 
-        for i in xrange(0, n_src):
+        for i in range(0, n_src):
             # getting the coordinates of the i-th source
             (i_x, i_y) = np.unravel_index(i, (nsx, nsy), order='F')
             y_src = self.Y_src[i_x, i_y]
